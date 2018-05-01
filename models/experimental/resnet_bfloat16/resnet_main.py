@@ -386,7 +386,7 @@ def main(unused_argv):
       evaluation_master=tpu_grpc_url,
       model_dir=FLAGS.model_dir,
       save_checkpoints_steps=FLAGS.iterations_per_loop,
-      keep_checkpoint_max=None,
+      keep_checkpoint_max=5,
       tpu_config=tpu_config.TPUConfig(
           iterations_per_loop=FLAGS.iterations_per_loop,
           num_shards=FLAGS.num_cores,

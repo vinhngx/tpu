@@ -158,6 +158,42 @@ LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
     (1.0, 5), (0.1, 30), (0.01, 60), (0.001, 80)
 ]
 
+def get_custom_getter():
+  """Returns a custom getter that this class's methods must be called under.
+  All methods of this class must be called under a variable scope that was
+  passed this custom getter. Example:
+  ```python
+  network = ConvNetBuilder(...)
+  with tf.variable_scope('cg', custom_getter=network.get_custom_getter()):
+    network.conv(...)
+    # Call more methods of network here
+  ```
+  Currently, this custom getter only does anything if self.use_tf_layers is
+  True. In that case, it causes variables to be stored as dtype
+  self.variable_type, then casted to the requested dtype, instead of directly
+  storing the variable as the requested dtype.
+  """
+
+  def inner_custom_getter(getter, *args, **kwargs):
+    """Custom getter that forces variables to have type self.variable_type."""
+    cast_to_bfloat16 = False
+    requested_dtype = kwargs['dtype']
+    if requested_dtype == tf.bfloat16:
+      # Only change the variable dtype if doing so does not decrease variable
+      # precision.
+      kwargs['dtype'] = tf.float32
+      cast_to_bfloat16 = True
+    var = getter(*args, **kwargs)
+    # This if statement is needed to guard the cast, because batch norm
+    # assigns directly to the return value of this custom getter. The cast
+    # makes the return value not a variable so it cannot be assigned. Batch
+    # norm variables are always in fp32 so this if statement is never
+    # triggered for them.
+    if cast_to_bfloat16:
+      var = tf.cast(var, tf.bfloat16)
+    return var
+
+  return inner_custom_getter
 
 def learning_rate_schedule(current_epoch):
   """Handles linear scaling rule, gradual warmup, and LR decay.
