@@ -55,6 +55,8 @@ flags.DEFINE_string(
     help='GRPC URL of the eval master. Set to an appropiate value when running '
     'on CPU/GPU')
 flags.DEFINE_bool('use_tpu', True, 'Use TPUs rather than CPUs')
+flags.DEFINE_bool('use_bfloat16', False, 'Use bfloat16')
+
 flags.DEFINE_bool(
     'use_xla', False,
     'Use XLA even if use_tpu is false.  If use_tpu is true, we always use XLA, '
@@ -178,7 +180,7 @@ def main(argv):
           skip_crowd=False,
           resnet_checkpoint=None,
           is_training_bn=False,
-          use_bfloat16=False,
+          use_bfloat16=FLAGS.use_bfloat16,
       )
       eval_estimator = tpu_estimator.TPUEstimator(
           model_fn=retinanet_model.retinanet_model_fn,
