@@ -28,7 +28,7 @@ import tensorflow as tf
 
 from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.tpu.python.tpu import tpu_optimizer
-
+from tensorflow.contrib.tpu.python.tpu import bfloat16
 
 def conv2d(inputs,
            filters,
@@ -95,9 +95,11 @@ def metric_fn(labels, logits, learning_rate):
 def model_fn(features, labels, mode, params):
   """TPUEstimatorSpec for the Squeezenet model."""
   is_training = mode == tf.estimator.ModeKeys.TRAIN
-  logits = squeezenet(
-      features, is_training=is_training, num_classes=params["num_classes"])
-
+  with bfloat16.bfloat16_scope():
+      logits = squeezenet(
+          features, is_training=is_training, num_classes=params["num_classes"])
+      logits = tf.cast(logits, tf.float32)
+      
   loss = tf.reduce_mean(
       tf.losses.sparse_softmax_cross_entropy(logits=logits, labels=labels))
 
