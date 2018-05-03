@@ -26,7 +26,7 @@ from absl import flags
 import absl.logging as _logging  # pylint: disable=unused-import
 import tensorflow as tf
 
-import imagenet_input
+import imagenet_input_varyingImgSize
 import resnet_model_v2
 from tensorflow.contrib import summary
 from tensorflow.contrib.tpu.python.tpu import bfloat16
@@ -403,12 +403,12 @@ def main(unused_argv):
 
   # Input pipelines are slightly different (with regards to shuffling and
   # preprocessing) between training and evaluation.
-  imagenet_train = imagenet_input.ImageNetInput(
+  imagenet_train = imagenet_input_varyingImgSize.ImageNetInput(
       is_training=True,
       data_dir=FLAGS.data_dir,
       num_parallel_calls=FLAGS.num_parallel_calls,
       use_transpose=FLAGS.use_transpose)
-  imagenet_eval = imagenet_input.ImageNetInput(
+  imagenet_eval = imagenet_input_varyingImgSize.ImageNetInput(
       is_training=False,
       data_dir=FLAGS.data_dir,
       num_parallel_calls=FLAGS.num_parallel_calls,
@@ -515,7 +515,7 @@ def main(unused_argv):
     tf.logging.info('Starting to export model.')
     resnet_classifier.export_savedmodel(
         export_dir_base=FLAGS.export_dir,
-        serving_input_receiver_fn=imagenet_input.image_serving_input_fn)
+        serving_input_receiver_fn=imagenet_input_varyingImgSize.image_serving_input_fn)
 
 
 if __name__ == '__main__':
