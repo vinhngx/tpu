@@ -23,10 +23,10 @@ import os
 import tensorflow as tf
 
 import resnet_preprocessing_varyingImgSize
-from resnet_preprocessing_varyingImgSize import get_epoch_for_global_step
 from tensorflow.contrib.data.python.ops import batching
 
-IMG_SIZE_ARR = resnet_preprocessing_varyingImgSize.IMG_SIZE_ARR
+DEFAULT_PER_CORE_BATCH_SIZE = 256 #default per core batchsize at 224x224
+DEFAULT_IMG_SIZE = 224
 
 def image_serving_input_fn():
   """Serving input fn for raw images."""
@@ -75,13 +75,19 @@ class ImageNetInput(object):
                data_dir,
                num_cores=8,
                num_parallel_calls=64,
-               use_transpose=False):
+               use_transpose=False, 
+               image_size=224,
+               is_simple=False
+               ):
     self.image_preprocessing_fn = resnet_preprocessing_varyingImgSize.preprocess_image
     self.is_training = is_training
     self.data_dir = data_dir
     self.num_cores = num_cores
     self.num_parallel_calls = num_parallel_calls
     self.use_transpose = use_transpose
+    
+    self.image_size = image_size
+    self.is_simple = is_simple
 
   def dataset_parser(self, value):
     """Parse an ImageNet record from a serialized string Tensor."""
@@ -112,6 +118,8 @@ class ImageNetInput(object):
     image = self.image_preprocessing_fn(
         image=image,
         is_training=self.is_training,
+        image_size=self.image_size,
+        is_simple=self.is_simple
     )
 
     # Subtract one so that labels are in [0, 1000).
@@ -135,16 +143,9 @@ class ImageNetInput(object):
     # Retrieves the batch size for the current shard. The # of shards is
     # computed according to the input pipeline deployment. See
     # tf.contrib.tpu.RunConfig for details.
-    batch_size = params['batch_size']
     
-    #customer batch size
-    global_step = tf.train.get_global_step()
-    if global_step is None: global_step = 0
-    cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
-    for item in IMG_SIZE_ARR:
-      if cur_epoch > item[0]:
-        IMAGE_SIZE = item[1]
-    batch_size = int((2048/8)/((IMAGE_SIZE/224.)**2))    
+    #batch_size = params['batch_size']
+    batch_size = DEFAULT_PER_CORE_BATCH_SIZE/((self.image_size/DEFAULT_IMG_SIZE)**2)
 
     # Shuffle the filenames to ensure better randomization.
     file_pattern = os.path.join(self.data_dir, 'train-*'

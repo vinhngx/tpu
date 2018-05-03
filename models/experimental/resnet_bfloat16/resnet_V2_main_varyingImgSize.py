@@ -155,6 +155,13 @@ LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
     (1.0, 5), (0.1, 15), (0.01, 30), (0.001, 35), (0.0001, 40)
 ]
 
+IMG_SIZE_SCHEDULE = [(-1, 112, True),
+                     (05, 136, True),
+                     (15, 160, True),
+                     (20, 184, False),
+                     (25, 208, False),
+                     (30, 224, False),
+                     ]
 
 def learning_rate_schedule(current_epoch):
   """Handles linear scaling rule, gradual warmup, and LR decay.
@@ -472,6 +479,27 @@ def main(unused_argv):
   elif FLAGS.mode == 'train_and_eval':
     results = []
     while current_epoch < 95:
+      
+      IMAGE_SIZE = 0  
+      for item in IMG_SIZE_SCHEDULE:
+       if current_epoch > item[0]:
+        IMAGE_SIZE = item[1]
+        is_simple = item[2];
+       
+      imagenet_train = imagenet_input_varyingImgSize.ImageNetInput(
+          is_training=True,
+          data_dir=FLAGS.data_dir,
+          num_parallel_calls=FLAGS.num_parallel_calls,
+          use_transpose=FLAGS.use_transpose,image_size=224,
+          is_simple=is_simple)
+      imagenet_eval = imagenet_input_varyingImgSize.ImageNetInput(
+          is_training=False,
+          data_dir=FLAGS.data_dir,
+          num_parallel_calls=FLAGS.num_parallel_calls,
+          use_transpose=FLAGS.use_transpose,image_size=224,
+          is_simple=True)
+
+        
       next_checkpoint = (current_epoch + 1) * steps_per_epoch
       resnet_classifier.train(
           input_fn=imagenet_train.input_fn, max_steps=next_checkpoint)

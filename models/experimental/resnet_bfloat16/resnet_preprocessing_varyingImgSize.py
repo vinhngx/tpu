@@ -23,9 +23,6 @@ IMAGE_SIZE = 0
 MEAN_RGB = [0.485, 0.456, 0.406]
 STDDEV_RGB = [0.229, 0.224, 0.225]
 
-def get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.):
-    return global_step/(NUM_TRAIN_IMAGES/BATCH_SIZE)
-
 def _crop(image, offset_height, offset_width, crop_height, crop_width):
   """Crops the given image using the provided offsets and sizes.
 
@@ -201,14 +198,7 @@ def _normalize(image):
   image /= scale
   return image
 
-IMG_SIZE_ARR = [(-1, 112),
-                (05, 136),
-                (15, 160),
-                (20, 184),
-                (25, 208),
-                (30, 224),
-                ]
-def preprocess_for_train(image):
+def preprocess_for_train(image, size):
   """Preprocesses the given image for evaluation.
 
   Args:
@@ -217,28 +207,16 @@ def preprocess_for_train(image):
   Returns:
     A preprocessed image `Tensor`.
   """
-  IMAGE_SIZE = 0   
-  global_step = tf.train.get_global_step()
-  if global_step is None: global_step = 0
-  cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
-  for item in IMG_SIZE_ARR:
-    if cur_epoch > item[0]:
-        IMAGE_SIZE = item[1]
+  IMAGE_SIZE = size
   
-  if global_step > 20:      
-      image = _random_crop(image, IMAGE_SIZE)
-      image = _normalize(image)
-      image = _flip(image)
-  else: #employ simpler processing
-      image = _do_scale(image, IMAGE_SIZE + 32)
-      image = _normalize(image)
-      image = _center_crop(image, IMAGE_SIZE)
-  
+  image = _random_crop(image, IMAGE_SIZE)
+  image = _normalize(image)
+  image = _flip(image)
   image = tf.reshape(image, [IMAGE_SIZE, IMAGE_SIZE, 3])
   return image
 
 
-def preprocess_for_eval(image):
+def preprocess_for_eval(image, size):
   """Preprocesses the given image for evaluation.
 
   Args:
@@ -247,21 +225,15 @@ def preprocess_for_eval(image):
   Returns:
     A preprocessed image `Tensor`.
   """  
-  IMAGE_SIZE = 0   
-  global_step = tf.train.get_global_step()
-  if global_step is None: global_step = 0
-  cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
-  for item in IMG_SIZE_ARR:
-    if cur_epoch > item[0]:
-        IMAGE_SIZE = item[1]
-        
+  IMAGE_SIZE = size
+      
   image = _do_scale(image, IMAGE_SIZE + 32)
   image = _normalize(image)
   image = _center_crop(image, IMAGE_SIZE)
   image = tf.reshape(image, [IMAGE_SIZE, IMAGE_SIZE, 3])
   return image
 
-def preprocess_image(image, is_training=False):
+def preprocess_image(image, is_training=False, image_size=224, is_simple=False):
   """Preprocesses the given image.
 
   Args:
@@ -272,6 +244,9 @@ def preprocess_image(image, is_training=False):
     A preprocessed image `Tensor`.
   """
   if is_training:
-    return preprocess_for_train(image)
+      if is_simple:
+          return preprocess_for_eval(image, image_size)
+      else:
+          return preprocess_for_train(image, image_size)
   else:
-    return preprocess_for_eval(image)
+    return preprocess_for_eval(image, image_size)
