@@ -86,10 +86,8 @@ flags.DEFINE_integer(
           ' running out of memory.'))
 
 flags.DEFINE_integer(
-    'train_steps', default=112590,
-    help=('The number of steps to use for training. Default is 112590 steps'
-          ' which is approximately 90 epochs at batch size 1024. This flag'
-          ' should be adjusted according to the --train_batch_size flag.'))
+    'train_steps', default=28148,
+    help=('The number of steps to use for training. 45 epochs at 2048 batch size.'))
 
 flags.DEFINE_integer(
     'train_batch_size', default=1024, help='Batch size for training.')
