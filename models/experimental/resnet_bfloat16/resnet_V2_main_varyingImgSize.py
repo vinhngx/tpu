@@ -412,12 +412,14 @@ def main(unused_argv):
       is_training=True,
       data_dir=FLAGS.data_dir,
       num_parallel_calls=FLAGS.num_parallel_calls,
-      use_transpose=FLAGS.use_transpose)
+      use_transpose=FLAGS.use_transpose,image_size=224,
+      is_simple=False)
   imagenet_eval = imagenet_input_varyingImgSize.ImageNetInput(
       is_training=False,
       data_dir=FLAGS.data_dir,
       num_parallel_calls=FLAGS.num_parallel_calls,
-      use_transpose=FLAGS.use_transpose)
+      use_transpose=FLAGS.use_transpose,image_size=224,
+      is_simple=True)
 
   current_step = estimator._load_global_step_from_checkpoint_dir(FLAGS.model_dir)  # pylint: disable=protected-access,line-too-long
   steps_per_epoch = NUM_TRAIN_IMAGES // FLAGS.train_batch_size
@@ -490,16 +492,15 @@ def main(unused_argv):
           is_training=True,
           data_dir=FLAGS.data_dir,
           num_parallel_calls=FLAGS.num_parallel_calls,
-          use_transpose=FLAGS.use_transpose,image_size=224,
+          use_transpose=FLAGS.use_transpose,image_size=IMAGE_SIZE,
           is_simple=is_simple)
       imagenet_eval = imagenet_input_varyingImgSize.ImageNetInput(
           is_training=False,
           data_dir=FLAGS.data_dir,
           num_parallel_calls=FLAGS.num_parallel_calls,
-          use_transpose=FLAGS.use_transpose,image_size=224,
+          use_transpose=FLAGS.use_transpose,image_size=IMAGE_SIZE,
           is_simple=True)
-
-        
+   
       next_checkpoint = (current_epoch + 1) * steps_per_epoch
       resnet_classifier.train(
           input_fn=imagenet_train.input_fn, max_steps=next_checkpoint)
