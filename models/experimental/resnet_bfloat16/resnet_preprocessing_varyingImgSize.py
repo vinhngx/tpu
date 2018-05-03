@@ -18,6 +18,7 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
+import vgg_preprocessing
 
 IMAGE_SIZE = 0
 MEAN_RGB = [0.485, 0.456, 0.406]
@@ -245,7 +246,7 @@ def preprocess_image(image, is_training=False, image_size=224, is_simple=False):
   """
   if is_training:
       if is_simple:
-          return preprocess_for_eval(image, image_size)
+          return vgg_preprocessing.preprocess_image(image, image_size, image_size, is_training)
       else:
           return preprocess_for_train(image, image_size)
   else:
