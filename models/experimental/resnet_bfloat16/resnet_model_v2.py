@@ -251,9 +251,12 @@ def resnet_v2_generator(block_fn, layers, num_classes):
         strides=2, is_training=is_training, name='block_layer4')
 
     inputs = batch_norm_relu(inputs, is_training)
-    inputs = tf.layers.average_pooling2d(
-        inputs=inputs, pool_size=7, strides=1, padding='VALID',
-        data_format='channels_first')
+    
+    #inputs = tf.layers.average_pooling2d(
+    #    inputs=inputs, pool_size=7, strides=1, padding='VALID',
+    #    data_format='channels_first')
+    inputs = tf.reduce_mean(inputs, [1,2])
+    
     inputs = tf.identity(inputs, 'final_avg_pool')
     inputs = tf.reshape(inputs,
                         [-1, 512 if block_fn is building_block else 2048])

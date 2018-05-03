@@ -238,6 +238,7 @@ def preprocess_for_eval(image):
   Returns:
     A preprocessed image `Tensor`.
   """
+  IMAGE_SIZE = 224
   image = _do_scale(image, IMAGE_SIZE + 32)
   image = _normalize(image)
   image = _center_crop(image, IMAGE_SIZE)

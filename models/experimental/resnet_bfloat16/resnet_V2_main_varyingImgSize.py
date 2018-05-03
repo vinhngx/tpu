@@ -96,7 +96,7 @@ flags.DEFINE_integer(
     'eval_batch_size', default=1024, help='Batch size for evaluation.')
 
 flags.DEFINE_integer(
-    'steps_per_eval', default=1251,
+    'steps_per_eval', default=2000,
     help=('Controls how often evaluation is performed. Since evaluation is'
           ' fairly expensive, it is advised to evaluate as infrequently as'
           ' possible (i.e. up to --train_steps, which evaluates the model only'
