@@ -202,7 +202,10 @@ def _normalize(image):
   return image
 
 IMG_SIZE_ARR = [(-1, 112),
-                (15, 168),
+                (05, 136),
+                (15, 160),
+                (20, 184),
+                (25, 208),
                 (30, 224),
                 ]
 def preprocess_for_train(image):
@@ -221,10 +224,16 @@ def preprocess_for_train(image):
   for item in IMG_SIZE_ARR:
     if cur_epoch > item[0]:
         IMAGE_SIZE = item[1]
-        
-  image = _random_crop(image, IMAGE_SIZE)
-  image = _normalize(image)
-  image = _flip(image)
+  
+  if global_step > 20:      
+      image = _random_crop(image, IMAGE_SIZE)
+      image = _normalize(image)
+      image = _flip(image)
+  else: #employ simpler processing
+      image = _do_scale(image, IMAGE_SIZE + 32)
+      image = _normalize(image)
+      image = _center_crop(image, IMAGE_SIZE)
+  
   image = tf.reshape(image, [IMAGE_SIZE, IMAGE_SIZE, 3])
   return image
 

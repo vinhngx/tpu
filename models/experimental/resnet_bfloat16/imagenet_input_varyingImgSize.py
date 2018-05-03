@@ -23,8 +23,10 @@ import os
 import tensorflow as tf
 
 import resnet_preprocessing_varyingImgSize
+from resnet_preprocessing_varyingImgSize import get_epoch_for_global_step
 from tensorflow.contrib.data.python.ops import batching
 
+IMG_SIZE_ARR = resnet_preprocessing_varyingImgSize.IMG_SIZE_ARR
 
 def image_serving_input_fn():
   """Serving input fn for raw images."""
@@ -134,12 +136,21 @@ class ImageNetInput(object):
     # computed according to the input pipeline deployment. See
     # tf.contrib.tpu.RunConfig for details.
     batch_size = params['batch_size']
+    
+    #customer batch size
+    global_step = tf.train.get_global_step()
+    if global_step is None: global_step = 0
+    cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
+    for item in IMG_SIZE_ARR:
+      if cur_epoch > item[0]:
+        IMAGE_SIZE = item[1]
+    batch_size = int((2048/8)/((IMAGE_SIZE/224.)**2))    
 
     # Shuffle the filenames to ensure better randomization.
     file_pattern = os.path.join(self.data_dir, 'train-*'
                                 if self.is_training else 'validation-*')
     dataset = tf.data.Dataset.list_files(file_pattern, shuffle=self.is_training)
-
+ 
     if self.is_training:
       dataset = dataset.repeat()
 
