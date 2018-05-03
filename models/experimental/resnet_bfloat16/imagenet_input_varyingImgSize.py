@@ -145,7 +145,7 @@ class ImageNetInput(object):
     # tf.contrib.tpu.RunConfig for details.
     
     #batch_size = params['batch_size']
-    batch_size = DEFAULT_PER_CORE_BATCH_SIZE/((self.image_size/DEFAULT_IMG_SIZE)**2)
+    batch_size = int(DEFAULT_PER_CORE_BATCH_SIZE/((self.image_size/DEFAULT_IMG_SIZE)**2))
 
     # Shuffle the filenames to ensure better randomization.
     file_pattern = os.path.join(self.data_dir, 'train-*'

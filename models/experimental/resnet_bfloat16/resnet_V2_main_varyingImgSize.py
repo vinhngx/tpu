@@ -425,7 +425,7 @@ def main(unused_argv):
   steps_per_epoch = NUM_TRAIN_IMAGES // FLAGS.train_batch_size
   start_timestamp = time.time()
   current_epoch = current_step // steps_per_epoch
-  print('>>>>>>>>>Current epochs: %d'%current_epoch)
+  print('>>>>>>>>>Current loaded epochs: %d'%current_epoch)
 
   if FLAGS.mode == 'train':
     resnet_classifier.train(
@@ -488,7 +488,8 @@ def main(unused_argv):
        if current_epoch > item[0]:
         IMAGE_SIZE = item[1]
         is_simple = item[2];
-       
+       print('>>>>>>>>>Current epochs: %d'%current_epoch, IMAGE_SIZE)
+        
       imagenet_train = imagenet_input_varyingImgSize.ImageNetInput(
           is_training=True,
           data_dir=FLAGS.data_dir,
