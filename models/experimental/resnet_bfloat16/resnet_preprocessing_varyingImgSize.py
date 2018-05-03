@@ -19,7 +19,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-IMAGE_SIZE = 224
+IMAGE_SIZE = 0
 MEAN_RGB = [0.485, 0.456, 0.406]
 STDDEV_RGB = [0.229, 0.224, 0.225]
 
@@ -201,7 +201,7 @@ def _normalize(image):
   image /= scale
   return image
 
-IMG_SIZE_ARR = [(0, 112),
+IMG_SIZE_ARR = [(-1, 112),
                 (15, 168),
                 (30, 224),
                 ]
@@ -213,7 +213,8 @@ def preprocess_for_train(image):
 
   Returns:
     A preprocessed image `Tensor`.
-  """  
+  """
+  global IMAGE_SIZE
   global_step = tf.train.get_global_step()
   if global_step is None: global_step = 0
   cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
