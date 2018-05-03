@@ -103,7 +103,7 @@ flags.DEFINE_integer(
           ' after finishing the entire training regime).'))
 
 flags.DEFINE_integer(
-    'iterations_per_loop', default=1251,
+    'iterations_per_loop', default=1000,
     help=('Number of steps to run on TPU before outfeeding metrics to the CPU.'
           ' If the number of iterations in the loop would exceed the number of'
           ' train steps, the loop will exit before reaching'
@@ -155,7 +155,7 @@ LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
     (1.0, 5), (0.1, 15), (0.01, 30), (0.001, 35), (0.0001, 40)
 ]
 
-IMG_SIZE_SCHEDULE = [(-1, 112, False),
+IMG_SIZE_SCHEDULE = [(-1, 112, True),
                      (05, 136, True),
                      (15, 160, True),
                      (20, 184, False),
@@ -484,6 +484,7 @@ def main(unused_argv):
     while current_epoch < 95:
       
       IMAGE_SIZE = 112  
+      is_simple = None
       for item in IMG_SIZE_SCHEDULE:
        if current_epoch > item[0]:
         IMAGE_SIZE = item[1]
