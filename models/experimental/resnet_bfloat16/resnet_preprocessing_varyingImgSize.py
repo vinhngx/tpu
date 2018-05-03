@@ -214,7 +214,7 @@ def preprocess_for_train(image):
   Returns:
     A preprocessed image `Tensor`.
   """
-  global IMAGE_SIZE
+  IMAGE_SIZE = 0   
   global_step = tf.train.get_global_step()
   if global_step is None: global_step = 0
   cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
