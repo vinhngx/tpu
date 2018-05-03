@@ -237,8 +237,15 @@ def preprocess_for_eval(image):
 
   Returns:
     A preprocessed image `Tensor`.
-  """
-  IMAGE_SIZE = 224
+  """  
+  IMAGE_SIZE = 0   
+  global_step = tf.train.get_global_step()
+  if global_step is None: global_step = 0
+  cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
+  for item in IMG_SIZE_ARR:
+    if cur_epoch > item[0]:
+        IMAGE_SIZE = item[1]
+        
   image = _do_scale(image, IMAGE_SIZE + 32)
   image = _normalize(image)
   image = _center_crop(image, IMAGE_SIZE)
