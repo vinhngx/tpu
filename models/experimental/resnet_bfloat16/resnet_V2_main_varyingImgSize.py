@@ -148,14 +148,14 @@ NUM_TRAIN_IMAGES = 1281167
 NUM_EVAL_IMAGES = 50000
 
 # Learning hyperparameters
-BASE_LEARNING_RATE = 0.1     # base LR when batch size = 256
+BASE_LEARNING_RATE = 0.1*4     # base LR when batch size = 256
 MOMENTUM = 0.9
 WEIGHT_DECAY = 1e-4
 LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
     (1.0, 5), (0.1, 15), (0.01, 30), (0.001, 35), (0.0001, 40)
 ]
 
-IMG_SIZE_SCHEDULE = [(-1, 112, True),
+IMG_SIZE_SCHEDULE = [(-1, 112, False),
                      (05, 136, True),
                      (15, 160, True),
                      (20, 184, False),
