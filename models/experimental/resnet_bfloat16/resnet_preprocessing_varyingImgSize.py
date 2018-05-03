@@ -251,6 +251,7 @@ def preprocess_image(image, is_training=False):
   global IMAGE_SIZE
   if is_training:
     global_step = tf.train.get_global_step()
+    if global_step is None: global_step = 0
     cur_epoch = get_epoch_for_global_step(global_step, NUM_TRAIN_IMAGES = 1281167, BATCH_SIZE = 2048.)
     for item in IMG_SIZE_ARR:
         if cur_epoch > item[0]:

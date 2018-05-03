@@ -154,7 +154,7 @@ BASE_LEARNING_RATE = 0.1     # base LR when batch size = 256
 MOMENTUM = 0.9
 WEIGHT_DECAY = 1e-4
 LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
-    (1.0, 5), (0.1, 30), (0.01, 60), (0.001, 80)
+    (1.0, 5), (0.1, 15), (0.01, 25), (0.001, 30), (0.0001, 35)
 ]
 
 
