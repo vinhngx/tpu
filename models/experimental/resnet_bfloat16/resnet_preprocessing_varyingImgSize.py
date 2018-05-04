@@ -248,10 +248,12 @@ def preprocess_image(image, is_training=False, image_size=224, is_simple=False):
       if is_simple:
           #return vgg_preprocessing.preprocess_image(image, image_size, image_size, is_training)
           try:
-              image = tf.image.resize_images(image, [224, 224])[0]
+              image = tf.image.resize_images(image, [image_size, image_size])[0]
           except:
-              image = tf.image.grayscale_to_rgb(tf.expand_dims(image,2))[0]
-              image = tf.image.resize_images(image, [224, 224])[0]
+              #image = tf.image.grayscale_to_rgb(tf.expand_dims(image,2))[0]
+              #image = tf.image.resize_images(image, [224, 224])[0]
+              image = tf.random_uniform(
+               [image_size, image_size, 3], minval=-1, maxval=1)
           image = _normalize(image)
           return image
       else:
