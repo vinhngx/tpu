@@ -249,6 +249,7 @@ MOVING_AVERAGE_DECAY = 0.995
 BATCH_NORM_DECAY = 0.996
 BATCH_NORM_EPSILON = 1e-3
 
+WEIGHT_DECAY=0.00004
 
 class InputPipeline(object):
   """Generates ImageNet input_fn for training or evaluation.
@@ -476,12 +477,15 @@ def inception_model_fn(features, labels, mode, params):
 
   one_hot_labels = tf.one_hot(labels, FLAGS.num_classes, dtype=tf.int32)
 
-  tf.losses.softmax_cross_entropy(
+  loss = tf.losses.softmax_cross_entropy(
       onehot_labels=one_hot_labels,
       logits=logits,
       weights=1.0,
       label_smoothing=0.1)
-  loss = tf.losses.get_total_loss(add_regularization_losses=True)
+  #loss = tf.losses.get_total_loss(add_regularization_losses=True)
+  loss += WEIGHT_DECAY * tf.add_n(
+      [tf.nn.l2_loss(v) for v in tf.trainable_variables()
+       if 'batch_normalization' not in v.name])
 
   initial_learning_rate = FLAGS.learning_rate * FLAGS.train_batch_size / 256
   if FLAGS.use_learning_rate_warmup:
