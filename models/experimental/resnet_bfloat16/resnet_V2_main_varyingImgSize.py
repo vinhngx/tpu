@@ -156,7 +156,7 @@ LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
 ]
 
 IMG_SIZE_SCHEDULE = [(-1, 112, True),
-                     (05, 136, False),
+                     (05, 136, True),
                      (15, 160, False),
                      (20, 184, False),
                      (25, 208, False),
