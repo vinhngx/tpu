@@ -33,6 +33,7 @@ from tensorflow.contrib.tpu.python.tpu import tpu_config
 from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.tpu.python.tpu import tpu_optimizer
 from tensorflow.contrib.training.python.training import evaluation
+from tensorflow.python.estimator import estimator
 
 FLAGS = flags.FLAGS
 
