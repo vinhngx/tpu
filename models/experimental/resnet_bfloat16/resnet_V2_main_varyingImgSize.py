@@ -163,7 +163,7 @@ IMG_SIZE_SCHEDULE = [#(-1, 112, True),
                      (30, 224, False),
                      ]
 
-def learning_rate_schedule(current_epoch):
+def learning_rate_schedule(current_epoch): 
   """Handles linear scaling rule, gradual warmup, and LR decay.
 
   The learning rate starts at 0, then it increases linearly per step.

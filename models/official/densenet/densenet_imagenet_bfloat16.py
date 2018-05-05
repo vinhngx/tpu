@@ -366,7 +366,9 @@ def main(unused_argv):
         input_fn=ImageNetInput(True), max_steps=FLAGS.train_steps)
 
   elif FLAGS.mode == "train_and_eval":
-    current_step = 0
+    #current_step = 0
+    current_step = estimator._load_global_step_from_checkpoint_dir(FLAGS.model_dir)
+    
     tf.logging.info("Training for %d steps (%.2f epochs in total). Current "
                     "step %d" %
                     (FLAGS.train_steps, FLAGS.train_steps / batches_per_epoch,
