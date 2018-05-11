@@ -28,6 +28,7 @@ import tensorflow as tf
 
 import densenet_model
 import vgg_preprocessing
+import resnet_preprocessing
 from tensorflow.contrib.tpu.python.tpu import bfloat16
 from tensorflow.contrib.tpu.python.tpu import tpu_config
 from tensorflow.contrib.tpu.python.tpu import tpu_estimator
@@ -191,10 +192,11 @@ class ImageNetInput(object):
     image = tf.image.convert_image_dtype(image, dtype=tf.float32)
 
     # TODO(shivaniagrawal): height and width of image from model
-    image = vgg_preprocessing.preprocess_image(
+    #image = vgg_preprocessing.preprocess_image(
+    image = resnet_preprocessing.preprocess_image(
         image=image,
-        output_height=224,
-        output_width=224,
+        #output_height=224,
+        #output_width=224,
         is_training=self.is_training)
 
     label = tf.cast(
