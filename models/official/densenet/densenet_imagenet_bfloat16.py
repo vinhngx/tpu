@@ -170,7 +170,8 @@ class ImageNetInput(object):
   def __init__(self, is_training, data_dir=None):
     self.is_training = is_training
     self.data_dir = data_dir if data_dir else FLAGS.data_dir
-
+    self.image_preprocessing_fn = resnet_preprocessing.preprocess_image
+    
   def dataset_parser(self, value):
     """Parse an Imagenet record from value."""
     keys_to_features = {
