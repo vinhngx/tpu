@@ -183,15 +183,12 @@ class ImageNetInput(object):
     }
 
     parsed = tf.parse_single_example(value, keys_to_features)
+    image_bytes = tf.reshape(parsed['image/encoded'], shape=[])
 
-    image = tf.image.decode_image(
-        tf.reshape(parsed["image/encoded"], shape=[]), _NUM_CHANNELS)
-    image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-
-    # TODO(shivaniagrawal): height and width of image from model
-    image = resnet_preprocessing.preprocess_image(
-        image,
-        is_training=self.is_training)
+    image = self.image_preprocessing_fn(
+        image_bytes=image_bytes,
+        is_training=self.is_training,
+    )
 
     label = tf.cast(
         tf.reshape(parsed["image/class/label"], shape=[]), dtype=tf.int32)
