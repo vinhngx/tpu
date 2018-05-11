@@ -190,7 +190,7 @@ class ImageNetInput(object):
 
     # TODO(shivaniagrawal): height and width of image from model
     image = resnet_preprocessing.preprocess_image(
-        image=image,
+        image,
         is_training=self.is_training)
 
     label = tf.cast(
